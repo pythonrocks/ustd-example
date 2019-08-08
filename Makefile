@@ -2,8 +2,6 @@ default: omni
 
 PWD := $(shell pwd)
 USER := $(shell id -u $$USER)
-PWD := $(shell pwd)
-USER := $(shell id -u $$USER)
 PROTOC := docker run --rm -v $(PWD):$(PWD) -u $(USER) -w $(PWD) znly/protoc \
 	--proto_path=:.
 
