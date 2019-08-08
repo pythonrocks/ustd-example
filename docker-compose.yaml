@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  omni:
+    image: mpugach/omnicored
+    volumes:
+      - omnicore:/home/bitcoin/.bitcoin
+    networks:
+      envoymesh:
+        aliases:
+          - omni
+    expose:
+      - "18332"
+    command: "-server -testnet -txindex -rpcuser=username -rpcpassword=password -rpcallowip=172.0.0.0/8 -printtoconsole"
+
+  api:
+    image: golang:1.12
+    volumes:
+      - "./:/opt/api"
+    working_dir: "/opt/api"
+    networks:
+      envoymesh:
+        aliases:
+          - api
+    expose:
+      - "5001"
+    command: "go run ./cmd/example-api/main.go"
+
+  envoy:
+    image: envoyproxy/envoy
+    volumes:
+      - "./envoy.yaml:/etc/envoy/envoy.yaml:ro"
+      - "./api_descriptor.pb:/tmp/api_descriptor.pb:ro"
+    networks:
+      - envoymesh
+    ports:
+      - "8000:8000"
+      - "9901:9901"
+
+volumes:
+  omnicore:
+
+networks:
+  envoymesh: {}

@@ -1,0 +1,5 @@
+rpcport: 5001
+host: omni
+port: 18332
+rpcuser: username
+rpcpassword: password

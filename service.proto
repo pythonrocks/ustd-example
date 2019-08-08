@@ -1,0 +1,112 @@
+syntax = "proto3";
+
+package api;
+
+option go_package = "server";
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+// 1. generate new address
+// 2. send funds to an address
+// 3. list existing addresses
+// 4. get transaction info
+// 5. get wallet/address info(balance, transactions etc)
+
+// ExampleAPI service
+service ExampleAPI {
+    // NewAddress returns new generated address
+    rpc NewAddress(google.protobuf.Empty) returns (AddressInfo) {
+        option (google.api.http) = {
+            post: "/api/v1/address"
+            body: "*"
+        };
+    }
+
+    // Transfer transfers funcs to an address
+    rpc Transfer(TransferRequest) returns (TransferResult) {
+        option (google.api.http) = {
+            post: "/api/v1/transaction"
+            body: "*"
+        };
+    }
+
+    // ListAddresses lists existing addresses for account
+    rpc ListAddresses(google.protobuf.Empty) returns (stream AddressInfo) {
+        option (google.api.http) = {
+            get: "/api/v1/address"
+        };
+    }
+
+    // GetTransactionInfo returns info about transaction
+    rpc GetTransactionInfo(TransactionInfoRequest) returns (TransactionInfo) {
+        option (google.api.http) = {
+            get: "/api/v1/transaction/{txID}"
+        };
+    }
+
+    // GetWalletInfo returns info about wallet
+    rpc GetWalletInfo(google.protobuf.Empty) returns (WalletInfo) {
+        option (google.api.http) = {
+            get: "/api/v1/wallet"
+        };
+    }
+
+    // GetAddressInfo returns info about address
+    rpc GetAddressInfo(AddressInfoRequest) returns (AddressInfo) {
+        option (google.api.http) = {
+            get: "/api/v1/address/{address}"
+        };
+    }
+}
+
+message Balance {
+    int32 propertyID = 1;
+    string name = 2;
+    string balance = 3;
+    string reserved = 4;
+    string frozen = 5;
+}
+
+message TransferRequest {
+    string fromaddress = 1;
+    string toaddress = 2;
+    string propertyid = 3;
+    string amount = 4;
+}
+
+message TransferResult {
+    string hash = 1;
+}
+
+message AddressInfo {
+    string address = 1;
+    repeated Balance balances = 2;
+}
+
+message TransactionInfoRequest {
+    string txID = 1;
+}
+
+message TransactionInfo {
+    string txID = 1;
+    string sendingAddress = 2;
+    string referencAaddress = 3;
+    bool isMine = 4;
+    int32 confirmations = 5;
+    string fee = 6;
+    int32 blockTime = 7;
+    bool valid = 8;
+    int32 positioninBlock = 9;
+    int32 version = 10;
+    int32 typeInt = 11;
+    string type = 12;
+}
+
+message AddressInfoRequest {
+    string address = 1;
+}
+
+message WalletInfo {
+    repeated Balance balances = 1;
+}
